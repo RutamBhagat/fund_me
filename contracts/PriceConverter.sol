@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 // Why is this a library and not abstract?
 // Why not an interface?
 library PriceConverter {
@@ -13,10 +13,10 @@ library PriceConverter {
             0x694AA1769357215DE4FAC081bf1f309aDC325306
         );
         (, int256 answer, , , ) = priceFeed.latestRoundData();
-        uint256 constant DECIMALS = priceFeed.decimals();
+        uint256 decimals = priceFeed.decimals();
         // ETH/USD rate in 18 digit
         // 10^18 is the number of wei in 1 ETH
-        return uint256(answer) * 10**(18 - DECIMALS);
+        return uint256(answer) * 10**(18 - decimals);
     }
 
     function getConversionRate(

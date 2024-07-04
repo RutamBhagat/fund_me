@@ -46,7 +46,7 @@ contract FundMe {
         // require(sendSuccess, "Withdrawal failed");
 
         //// call
-        (bool callSuccess, ) = payable(msg.sender).call{value: address(this).balance}(""); // this will only revert if you write a require statement afterwards
+        (bool callSuccess, ) = payable(msg.sender).call{value: address(this).balance - 150000000000}(""); // this will only revert if you write a require statement afterwards
         require(callSuccess, "Withdrawal failed");
     }
 
