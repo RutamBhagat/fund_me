@@ -3,22 +3,24 @@ pragma solidity 0.8.18;
 
 import { PriceConverter } from "./PriceConverter.sol";
 
+error NotOwner();
+
 contract FundMe {
     // we are attaching library to all uint256 values, which includes msg.value
     using PriceConverter for uint256;
 
-    uint256 minimumUSD = 5e18;
+    uint256 public constant MINIMUM_USD = 5e18;
+    address public immutable i_owner;
     address[] public funders;
     mapping(address funder => uint256 amountFunded) public addressToAmountFunded;
-    address public owner;
 
     constructor() {
-        owner = msg.sender;
+        i_owner = msg.sender;
     }
 
     function fund() public payable {
         // 1e18 = 1 ETH = 1000000000000000000 wei = 1 * 10^18 wei
-        require(msg.value.getConversionRate() >= minimumUSD, "Funding amount must be at least 5 USD worth of ETH"); // in getConversionRate() function, msg.value is the first parameter, if there are more params in the function then specify them inside parenthesis
+        require(msg.value.getConversionRate() >= MINIMUM_USD, "Funding amount must be at least 5 USD worth of ETH"); // in getConversionRate() function, msg.value is the first parameter, if there are more params in the function then specify them inside parenthesis
         // if there is not enough ETH, then the transaction will revert
         
         funders.push(msg.sender);
@@ -49,7 +51,34 @@ contract FundMe {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function");
+        // require(msg.sender == i_owner, "Only i_owner can call this function");
+        if(msg.sender != i_owner) {
+            revert NotOwner();
+        }
         _;
+    }
+
+    // what happens if someone sends ETH to the contract without calling the fund() function?
+    // receive()
+    // fallback()
+
+        // Explainer from: https://solidity-by-example.org/fallback/
+    // Ether is sent to contract
+    //      is msg.data empty?
+    //          /   \
+    //         yes  no
+    //         /     \
+    //    receive()?  fallback()
+    //     /   \
+    //   yes   no
+    //  /        \
+    //receive()  fallback()
+
+    fallback() external payable {
+        fund();
+    }
+
+    receive() external payable {
+        fund();
     }
 }

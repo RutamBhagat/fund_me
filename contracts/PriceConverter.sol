@@ -13,10 +13,10 @@ library PriceConverter {
             0x694AA1769357215DE4FAC081bf1f309aDC325306
         );
         (, int256 answer, , , ) = priceFeed.latestRoundData();
-        uint256 decimals = priceFeed.decimals();
+        uint256 constant DECIMALS = priceFeed.decimals();
         // ETH/USD rate in 18 digit
         // 10^18 is the number of wei in 1 ETH
-        return uint256(answer) * 10**(18 - decimals);
+        return uint256(answer) * 10**(18 - DECIMALS);
     }
 
     function getConversionRate(
