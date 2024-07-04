@@ -7,5 +7,9 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^1.1.1",
+    "@remix-project/remixd": "^0.6.34"
   }
 }
