@@ -19,13 +19,14 @@ library PriceConverter {
         return uint256(answer) * 10**(18 - decimals);
     }
 
-    // 1000000000
     function getConversionRate(
         uint256 ethAmount
     ) internal view returns (uint256) {
+        // remember that our ethAmount is in wei
         uint256 ethPrice = getPrice();
-        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1000000000000000000; // divided by the number of wei in 1 ETH
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18; // (since our ethAmount is in wei and also our ethPrice has 18 decimal places)
         // the actual ETH/USD conversion rate, after adjusting the extra 0s.
+        // Since solidity doesnt have support for decimal numbers, we need 18 decimal integers to get the actual conversion rate, keep this in mind 
         return ethAmountInUsd;
     }
 }
